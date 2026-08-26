@@ -642,15 +642,50 @@ body.rot-paused .pausebtn{border-color:var(--ink)}
    visual battery (F5) measures these laws on the built artifact at three
    widths; it is the permanent guard.
    Law 1: an instrument panel lies inside the viewport at every width and
-   height and its content scrolls inside. Desktop keeps the size-system cap
-   (top 112, bottom inset 18). Phone: top 206 plus a 14px inset, the phone
-   chrome's own edge inset.
+   height and its content scrolls inside. (Its numbers are restated by the
+   FINAL SIZING AUTHORITY block below, which is now where the panel cap
+   lives: full height outside a phone, a full-viewport sheet on one.)
    Law 2: the open phone rail lies inside the viewport, top 206 plus 14px;
    collapsed it has no box. */
 @media (max-width:760px){
   .segre{max-height:calc(100vh - 220px);max-height:calc(100dvh - 220px)}
   .rail{max-height:0}
   body.rail-open .rail{max-height:calc(100vh - 220px);max-height:calc(100dvh - 220px)}
+}
+
+/* FINAL SIZING AUTHORITY (P1.5b, the owner's P1.5 spec, landed after the
+   interpretation gap the ledger records). Law 13 governs: this block is
+   appended after the VIEWPORT LAWS block and nothing sizing follows it.
+   Law 1 restated: an instrument panel uses the viewport's full height,
+   top 12 with a 12 px inset below (dvh twin), the maximize preset under
+   the same cap, its content scrolling inside beneath a sticky header
+   that owns the panel's top padding and bleeds over its side padding so
+   its left and width are identical stuck and unstuck; on a phone a panel is a
+   full-viewport sheet, no border, no corner resize, and the maximize
+   preset and the isoelectronic panel's own width keep the sheet whole. */
+.segre{top:12px;padding-top:0;max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px)}
+.segre.max{max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px)}
+/* The panel's 10px top padding moves into the header. Engines inset the
+   sticky view rectangle by the scroll container's own padding (measured in
+   Chromium 151: a header with top:0 sticks at the content edge, top:-10px
+   reaches the padding edge; css-position-3 says scrollport, csswg-drafts
+   3352 records the divergence), so with padding-top 10 on the panel the
+   header sat 10px below the scrollport at rest and stuck, and content
+   scrolled through the gap (a negative top margin, the first attempt, did
+   nothing). Owning the 10px in the header puts the content edge at the
+   padding edge, so top:0 lands on the panel's top edge either way. */
+.sg-head{position:sticky;top:0;z-index:3;background:#fff;border-bottom:1px solid var(--line);
+  margin:0 -12px 0;padding:10px 12px 4px}
+@media (max-width:760px){
+  .segre{left:0;top:0;transform:none;width:100vw;max-width:100vw;height:100vh;max-height:100vh;
+    height:100dvh;max-height:100dvh;border-radius:0;border:0;resize:none}
+  .segre.max,.segre.ixp{width:100vw;max-width:100vw;height:100vh;max-height:100vh;height:100dvh;max-height:100dvh}
+  /* Five canvases (sw, mo, ix, ps, dc) carry only a CSS height, so their
+     width came from the bitmap's 2:1 ratio and a phone sheet panned
+     sideways (732px wide under the preset). A specified width sizes the
+     box on both axes; the other four already carry width:100%. The full
+     Law 5 fix at every width is recorded for P2. */
+  .segre canvas{width:100%}
 }
 </style>
 </head>
