@@ -9,7 +9,10 @@
 <meta property="og:description" content="An interactive periodic table in which every displayed number is computed from cited data inside the page itself: orbital filling, self-consistent-field ionization energies, nuclear decay chains, kinetic theory, and ligand-field magnetism, all machine-verified.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://jaredm-research.github.io/architecture-of-the-elements/">
-<meta name="twitter:card" content="summary">
+<meta property="og:image" content="https://jaredm-research.github.io/architecture-of-the-elements/assets/social.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a1f'/%3E%3Ccircle cx='9' cy='23' r='2.7' fill='%23f7f7f5'/%3E%3Ccircle cx='16' cy='16' r='2.7' fill='%23f7f7f5'/%3E%3Ccircle cx='23' cy='9' r='2.7' fill='%23f7f7f5'/%3E%3C/svg%3E">
 <style>/* styles.css  Publication-grade light theme. */
@@ -450,10 +453,10 @@ body.rot-paused .pausebtn{border-color:var(--ink)}
   .rail{top:206px;right:14px;left:auto;bottom:auto;width:auto;max-width:158px;gap:6px;z-index:10;
     max-height:0;overflow:hidden;opacity:0;pointer-events:none;
     transition:max-height .26s ease, opacity .26s ease}
-  /* OPEN state owns the cap and the scroll; this rule wins the cascade and
-     is verified in dist as the winning rule, not merely as present. */
+  /* OPEN state owns visibility and the scroll; its cap lives in the
+     VIEWPORT LAWS block at the end of this file, which the visual battery
+     measures (F5) and the accessibility battery pins in dist. */
   body.rail-open .rail{
-    max-height:calc(100vh - 218px);max-height:calc(100dvh - 218px);
     opacity:1;pointer-events:auto;overflow-y:auto;overflow-x:hidden;
     overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;
     scrollbar-width:thin;scrollbar-color:#c9c9c2 transparent;
@@ -591,7 +594,7 @@ body.rot-paused .pausebtn{border-color:var(--ink)}
    pause button and masthead. It now scrolls inside a hard cap and can
    never overlap anything again, whatever future instruments join it.
    On shorter screens the flavor descriptions yield first. */
-.rail{max-height:calc(100vh - 190px);overflow-y:auto;overscroll-behavior:contain;
+.rail{max-height:calc(100vh - 220px);max-height:calc(100dvh - 220px);overflow-y:auto;overscroll-behavior:contain;
   scrollbar-width:thin;padding-right:4px}
 @media (max-height:940px){ .rail .ov-desc{display:none} }
 
@@ -626,6 +629,29 @@ body.rot-paused .pausebtn{border-color:var(--ink)}
   font-family:"SF Mono",ui-monospace,monospace;font-size:10px;letter-spacing:.08em;
   padding:4px 9px;border-radius:2px;cursor:pointer;min-height:26px}
 #lfp .sg-legend .kn-chip[aria-pressed="true"]{background:#3a3a42;color:#fff;border-color:#3a3a42}
+
+/* VIEWPORT LAWS (P1.5). Origin: the visual battery's first run found the
+   panel size rule above (same specificity, later in the file) silently
+   overriding the phone cap declared at the top of the .segre section, and
+   the rail cap above overriding the phone rail's collapsed cap (the open
+   cap, body.rail-open .rail, already won by specificity; it now lives here
+   so panel and rail share one constant).
+   A later rule of equal specificity wins the cascade, media query or not,
+   so every sizing rule that must hold is appended HERE, after all existing
+   sizing rules, and nothing sizing is ever added above this block. The
+   visual battery (F5) measures these laws on the built artifact at three
+   widths; it is the permanent guard.
+   Law 1: an instrument panel lies inside the viewport at every width and
+   height and its content scrolls inside. Desktop keeps the size-system cap
+   (top 112, bottom inset 18). Phone: top 206 plus a 14px inset, the phone
+   chrome's own edge inset.
+   Law 2: the open phone rail lies inside the viewport, top 206 plus 14px;
+   collapsed it has no box. */
+@media (max-width:760px){
+  .segre{max-height:calc(100vh - 220px);max-height:calc(100dvh - 220px)}
+  .rail{max-height:0}
+  body.rail-open .rail{max-height:calc(100vh - 220px);max-height:calc(100dvh - 220px)}
+}
 </style>
 </head>
 <body>
@@ -10025,6 +10051,11 @@ async function start(elements, NUC, AB) {
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
+
+  // Readiness beacon: the last act of boot. Everything above (rail, panels,
+  // permalink boot, the panel size system, init, the loop) has run; the visual
+  // battery waits for html[data-aoe-ready="1"] before measuring anything.
+  document.documentElement.dataset.aoeReady = '1';
 
   return { get mode() { return mode; }, get prop() { return prop; } };
 }
